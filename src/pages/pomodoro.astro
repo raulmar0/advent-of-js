@@ -1,0 +1,240 @@
+---
+import DefaultLayout from '../layouts/DefaultLayout.astro'
+import GearSVG from '../assets/img/gear.svg'
+
+---
+
+<DefaultLayout title="Example Page">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+    @font-face {
+      font-family: "bebas";
+      src: url('../assets/fonts/bebasneue-book-webfont.woff') format('woff'),
+          url('../assets/fonts/bebasneue-book-webfont.woff2') format('woff2');
+    }
+
+    .pseudobody {
+      align-items: center;
+      background: #2B2A30;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      min-height: 100%;
+      min-width: 100vw;
+      padding: 0;
+    }
+
+    /* outer glow */
+    .wrapper {
+      align-items: center;
+      border-radius: 50%;
+      box-shadow: -5px 14px 44px #000000, 5px -16px 50px rgba(255, 255, 255, 0.15);
+      display: flex;
+      height: 518px;
+      justify-content: center;
+      position: relative;
+      width: 518px;
+    }
+
+    .ring {
+      position: absolute;
+      left: 0;
+      stroke: #09A65A;
+      top: 0;
+      z-index: 1;
+    }
+
+    .ring.ending circle {
+      stroke: #900A0A;
+    }
+
+    .ring.disabled circle {
+      stroke: #9A9A9A;
+    }
+
+    /* inner circle */
+    .timer {
+      align-items: center;
+      background: radial-gradient(71.4% 71.4% at 51.7% 28.6%, #3A393F 0%, #17171A 100%);
+      border-radius: 50%;
+      box-shadow: inset 0px 0px 114px rgba(0, 0, 0, 0.45);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 500px;
+      justify-content: center;
+      position: relative;
+      width: 500px;
+      z-index: 2;
+    }
+
+    /* actual time */
+    .time {
+      display: flex;
+      font-family: "bebas";
+      font-size: 196px;
+      margin: 30px auto;
+      position: relative;
+      top: 30px;
+    }
+
+    input[type="text"] {
+      border: 0;
+      border-bottom: 1px dashed white;
+      background: none;
+      color: white;
+      font-family: "bebas";
+      font-size: 196px;
+      height: 170px;
+      width: 150px;
+      text-align: center;
+      outline: none;
+    }
+
+    input[type=text]:disabled {
+      border-bottom: none;
+    }
+
+    .colon {
+      padding-top: 3rem;
+      margin: 0 10px;
+    }
+    .start {
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      letter-spacing: 10px;
+      line-height: 20px;
+      background: none;
+      color: white;
+      opacity: .5;
+      border: none;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .start:hover {
+      opacity: 1;
+    }
+
+    .settings {
+      border: none;
+      background: none;
+      cursor: pointer;
+      opacity: 0.3;
+    }
+
+    .settings:hover {
+      opacity: 1;
+    }
+  </style>
+
+  <div class="pseudobody">
+    <div class="wrapper">
+      <div class="ring">
+        <svg width="518" height="518" viewBox="0 0 518 518">
+          <circle stroke-width="9px" x="0" y="y" cx="259" cy="259" r="254" />
+        </svg>
+      </div>
+  
+      <div class="timer">
+        <div class="time">
+          <div class="minutes">
+            <input type="text" value="15" disabled />
+          </div>
+          <div class="colon">:</div>
+          <div class="seconds">
+            <input type="text" value="00" disabled />
+          </div>
+        </div>
+        <button class="start">start</button>
+        <button class="settings">
+          <img id="settingsImg" src={GearSVG} alt="Settings" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+</DefaultLayout>
+
+<script>
+  const GearSVG = (await import('../assets/img/gear.svg')).default
+  const CheckSVG = (await import('../assets/img/check.svg')).default
+  
+  const startButton = document.querySelector('.start')
+  const ring = document.querySelector('.ring')
+  const settings = document.querySelector('.settings')
+  const pomodoroTime = document.querySelectorAll('.timer input');
+  const settingsImg = document.querySelector('#settingsImg')
+
+  let isRunning = false
+  let isConfiguring = false;
+
+  startButton.addEventListener('click', () => {
+    if (isConfiguring) {
+      return;
+    }
+    isRunning = !isRunning;
+    toggleTimer();
+  })
+
+  settings.addEventListener('click', () => {
+    ring.classList.toggle('disabled')
+    isConfiguring = !isConfiguring;
+    isConfiguring ? settingsImg.src = CheckSVG : settingsImg.src = GearSVG;
+    isRunning = !isRunning;
+    toggleTimer();
+    pomodoroTime.forEach((input) => {
+      input.disabled = !input.disabled;
+    })
+    console.log({isRunning, isConfiguring})
+  })
+
+  pomodoroTime.forEach((input) => {
+    input.addEventListener('change', () => {
+      if (input.value > 0) {
+        ring.classList.remove('ending');
+      }
+    })
+  })
+
+  const startTimer = () => {
+    let time = 0;
+    const minutesInput = pomodoroTime[0].value;
+    const secondsInput = pomodoroTime[1].value;
+    let timeInSeconds = minutesInput * 60 + secondsInput * 1;
+    const timer = setInterval(() => {
+      if(!isRunning || timeInSeconds === 0 || isConfiguring) {
+        clearInterval(timer);
+        return;
+      }
+      timeInSeconds--;
+      time = timeInSeconds;
+      const minutes = Math.floor(time / 60);
+      const seconds = time % 60;
+      pomodoroTime[0].value = minutes;
+      pomodoroTime[1].value = seconds;
+      console.log(minutes, seconds);
+      if(time === 0) {
+        ring.classList.add('ending');
+        alert('Time is up!');
+        clearInterval(timer);
+      }
+    }, 1000)
+  }
+
+  const toggleTimer = () => {
+    if(isConfiguring) {
+      return;
+    }
+    if(isRunning) {
+      startButton.innerHTML = 'Stop';
+      console.log('timer started')
+      startTimer();
+    }
+    else {
+      startButton.innerHTML = 'Start';
+    }
+  }
+</script>

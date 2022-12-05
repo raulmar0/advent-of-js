@@ -6,7 +6,7 @@ import { DarkMode } from 'accessible-astro-components'
 <div id="main-navigation" class="is-desktop padding-16 color-neutral">
   <div class="container">
     <a href="/">
-      <img src={(await import('../assets/img/logo.svg')).default} alt="Your Logo">
+      <img width="45px" height="45px" src={(await import('../assets/img/calendar.png')).default} alt="Your Logo">
     </a>
     <div class="wrapper">
       <nav class="desktop-menu">
@@ -199,6 +199,9 @@ import { DarkMode } from 'accessible-astro-components'
   @use '../assets/scss/base/outline' as *;
   @use '../assets/scss/base/size' as *;
 
+  .menu-item a {
+    text-decoration: none;
+  }
   #main-navigation {
     > .container {
       display: flex;
@@ -294,7 +297,7 @@ import { DarkMode } from 'accessible-astro-components'
         margin-top: -1px;
         border: none;
         color: var(--action-color);
-        text-decoration: underline;
+        text-decoration: none;
         @include size-16;
 
         &::after {
