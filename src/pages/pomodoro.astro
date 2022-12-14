@@ -1,10 +1,10 @@
 ---
-import DefaultLayout from '../layouts/DefaultLayout.astro'
+import DaysLayout from '../layouts/DaysLayout.astro';
 import GearSVG from '../assets/img/gear.svg'
 
 ---
 
-<DefaultLayout title="Example Page">
+<DaysLayout title="Example Page">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
 
@@ -156,7 +156,7 @@ import GearSVG from '../assets/img/gear.svg'
     </div>
   </div>
 
-</DefaultLayout>
+</DaysLayout>
 
 <script>
   const GearSVG = (await import('../assets/img/gear.svg')).default
