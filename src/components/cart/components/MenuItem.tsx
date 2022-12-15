@@ -2,7 +2,7 @@ import { currencyFormat } from "../Cart";
 import { toUSD } from "../utilities/toUSD";
 
 function MenuItem({...props }) {
-  const imageMainPath = './cart-assets/img/';
+  const imageMainPath = '/cart-assets/img/';
   return (
     <li>
     <div className="plate">
