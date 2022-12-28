@@ -1,0 +1,258 @@
+---
+import DaysLayout from "../layouts/DaysLayout.astro";
+
+---
+
+<DaysLayout>
+  <main id="app">
+    <div>Loading...</div>
+    <script>
+      const content = [
+        {
+          'image': 'dave-hoefler-okUIdo6NxGo-unsplash.jpg',
+          'caption': 'Photo by Dave Hoefler on Unsplash'
+        },
+        {
+          'image': 'sherman-yang-VBBGigIuaDY-unsplash.jpg',
+          'caption': 'Photo by Sherman Yang n Unsplash'
+        },
+        {
+          'image': 'jakob-owens-EwRM05V0VSI-unsplash.jpg',
+          'caption': 'Photo by Jakob Owens on Unsplash'
+        },
+        {
+          'image': 'finding-dan-dan-grinwis-O35rT6OytRo-unsplash.jpg',
+          'caption': 'Photo by Dan Grinwis on Unsplash'
+        },
+        {
+          'image': 'vincentiu-solomon-ln5drpv_ImI-unsplash.jpg',
+          'caption': 'Photo by Vincentiu Solomon on Unsplash'
+        },
+        {
+          'image': 'silas-baisch-Wn4ulyzVoD4-unsplash.jpg',
+          'caption': 'Photo by Silas Baisch on Unsplash'
+        },
+        {
+          'image': 'eugene-golovesov-EXdXp7Z4X4w-unsplash.jpg',
+          'caption': 'Photo by Eugene Golovesov on Unsplash'
+        },
+        {
+          'image': 'jennifer-reynolds-_8HI5xf4TkE-unsplash.jpg',
+          'caption': 'Photo by Jennifer reynolds on Unsplash'
+        },
+        {
+          'image': 'kellen-riggin-SIBOiXKg0Ds-unsplash.jpg',
+          'caption': 'Photo by Kellen Riggin on Unsplash'
+        },
+        {
+          'image': 'rafael-hoyos-weht-zhkAp8DGkxw-unsplash.jpg',
+          'caption': 'Photo by Rafael Hoyos on Unsplash'
+        },
+        {
+          'image': 'sonya-romanovska-wzdXhyi3AiM-unsplash.jpg',
+          'caption': 'Photo by Sonya Romanovska on Unsplash'
+        },
+      ]
+
+      const App = document.querySelector('#app')
+
+      const ImgThumbnail = (image, caption) => {
+        return `
+        <li>
+          <a href="#">
+            <img src="/advent-of-js/carousel-assets/images/${image}" alt="${caption}">
+          </a>
+        </li>
+        `
+      }
+
+      const InitialRender = (content) => {
+
+        return `
+        <div class="feature">
+          <img src="/advent-of-js/carousel-assets/images/dave-hoefler-okUIdo6NxGo-unsplash.jpg" alt="Featured" />
+          <div class="caption">Photo by Dsadfave Hoefler Unsplash</div>
+        </div>
+
+        <div class="thumbnails">
+          <div>Scroll horizontally...</div>
+          <ul>
+            ${content.map((item) => ImgThumbnail(item.image, item.caption)).join('')}
+          </ul>
+        </div>
+
+        <a href="#" class="left"><img src="/advent-of-js/carousel-assets/images/chevron.svg" alt=""></a>
+        <a href="#" class="right"><img src="/advent-of-js/carousel-assets/images/chevron.svg" alt=""></a>
+        `
+      }
+
+      App.innerHTML = InitialRender(content)
+      document.querySelector('a img[src="/advent-of-js/carousel-assets/images/dave-hoefler-okUIdo6NxGo-unsplash.jpg"]').parentElement.parentElement.classList.add('selected')
+
+
+      // Thumbnail Navigation
+
+      const Feature = document.querySelector('.feature')
+      const Thumbnails = document.querySelectorAll('li')
+
+      Thumbnails.forEach((thumbnail) => {
+        thumbnail.addEventListener('click', (e) => {
+          e.preventDefault()
+          Thumbnails.forEach((thumbnail) => thumbnail.classList.remove('selected'))
+          const image = e.target.src
+          const caption = e.target.alt
+          console.log(Thumbnails)
+          Feature.innerHTML = `
+          <img src="${image}" alt="${caption}" />
+          <div class="caption">${caption}</div>
+          `
+          e.path[2].classList.add('selected')
+        })
+      })
+
+      // Arrow Navigation
+
+      const Left = document.querySelector('.left')
+      const Right = document.querySelector('.right')
+
+      Left.addEventListener('click', (e) => {
+        e.preventDefault()
+        const current = document.querySelector('.selected')
+        const previous = current.previousElementSibling
+        const image = previous.children[0].children[0].src
+        const caption = previous.children[0].children[0].alt
+        Feature.innerHTML = `
+        <img src="${image}" alt="${caption}" />
+        <div class="caption">${caption}</div>
+        `
+        Thumbnails.forEach((thumbnail) => thumbnail.classList.remove('selected'))
+        previous.classList.add('selected')
+      })
+
+      Right.addEventListener('click', (e) => {
+        e.preventDefault()
+        const current = document.querySelector('.selected')
+        const next = current.nextElementSibling
+        const image = next.children[0].children[0].src
+        const caption = next.children[0].children[0].alt
+        Feature.innerHTML = `
+        <img src="${image}" alt="${caption}" />
+        <div class="caption">${caption}</div>
+        `
+        Thumbnails.forEach((thumbnail) => thumbnail.classList.remove('selected'))
+        next.classList.add('selected')
+      })
+
+      const styles = `
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+        main {
+          font-family: 'Roboto Mono', monospace;
+          padding: 0;
+          margin: 0;
+          min-width: 100vw;
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .feature {
+          padding-bottom: 200px; /* offset thumbnail strip at the bottom */
+        }
+
+        .feature img {
+          max-height: 615px;
+          max-width: 800px;
+        }
+
+        .caption {
+          text-align: center;
+          font-size: 14px;
+        }
+
+        .thumbnails {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100vw;
+          overflow-x: scroll;
+          scroll-padding: 0 100px;
+          scroll-snap-type: both mandatory;
+        }
+
+        .thumbnails > div {
+          text-align: center;
+        }
+
+        .thumbnails ul {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          gap: 30px;
+          position: relative;
+          padding: 0 100px;
+        }
+
+        .thumbnails li:last-child img {
+          margin-right: 100px;
+        }
+
+        .thumbnails li {
+          scroll-snap-align: start;
+          scroll-snap-stop: normal;
+        }
+
+        .thumbnails .selected {
+          outline: 10px solid #FF00C7;
+          outline-offset: -10px;
+        }
+
+        .thumbnails img {
+          object-fit: cover;
+          height: 175px;
+          width: 175px;
+          vertical-align: middle;
+        }
+
+        .left,
+        .right {
+          background: rgba(255, 0, 199, .3);
+          width: 100px;
+          height: 100vh;
+          position: absolute;
+          top: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-bottom: 200px;
+          box-sizing: border-box;
+        }
+
+        .left {
+          left: 0;
+        }
+
+        .right {
+          right: 0;
+        }
+
+        .left:hover,
+        .right:hover {
+          background: rgba(255, 0, 199, 1);
+        }
+
+        .right img {
+          transform: rotate(180deg);
+          margin: auto;
+        }
+      `
+
+      const styleSheet = document.createElement("style");
+      styleSheet.type = "text/css";
+      styleSheet.innerText = styles;
+      document.head.appendChild(styleSheet);
+    </script>
+  </main>
+</DaysLayout>
