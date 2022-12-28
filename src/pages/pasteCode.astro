@@ -1,0 +1,140 @@
+---
+import DaysLayout from "../layouts/DaysLayout.astro";
+
+---
+
+<DaysLayout>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;900&display=swap');
+
+    body {
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 100vw;
+      min-height: 100vh;
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    .wrapper {
+      background: white;
+      box-shadow: 0px 23px 44px #CAD0E0;
+      border-radius: 10px;
+      min-width: 575px;
+      padding: 70px 35px 30px;
+    }
+
+    h1 {
+      text-align: center;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: #6778E8;
+      font-weight: 900;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .fields {
+      margin-bottom: 45px;
+      display: flex;
+      justify-content: center;;
+    }
+
+    input[type=text] {
+      color: #6778E8;
+      font-weight: 900;
+      font-size: 3.75rem;
+      box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.05);
+      border-radius: 5px;
+      margin: 0px 10px;
+      font-family: 'Source Sans Pro', sans-serif;
+      border: none;
+      text-align: center;
+      width: 80px;
+      background: #F0F3FA;
+      height: 85px;
+    }
+
+
+    button {
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(93.32deg, #8D9EFF -10.93%, #A674FB 113.82%);
+      border-radius: 10px;
+      border: none;
+      height: 75px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+      margin-bottom: 0;
+    }
+
+    button {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+  <div class="wrapper">
+    <h1>Authorization Code</h1>
+    <p>Please enter the code that we sent to (***) *** - 2819.</p>
+    <form action="">
+      <div class="fields">
+        <input type="text" maxlength="1" value="" name="verification_1" />
+        <input type="text" maxlength="1" value="" name="verification_2" />
+        <input type="text" maxlength="1" value="" name="verification_3" />
+        <input type="text" maxlength="1" value="" name="verification_4" />
+      </div>
+      <button>Verify</button>
+    </form>
+  </div>
+  <script>
+    const inputs = document.querySelectorAll('input[type="text"]')
+    const AUTH_CODE_LENGTH = 4
+    let authInputPosition = 0
+
+    document.querySelector('input[name="verification_1"]').focus()
+
+    inputs.forEach(input => {
+      input.addEventListener('input', e => {
+        if (authInputPosition + 1 < AUTH_CODE_LENGTH) {
+          console.log({authInputPosition})
+          e.target.nextElementSibling.focus()
+          authInputPosition++
+        }
+      })
+    })
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Backspace') {
+        e.preventDefault()
+        if (authInputPosition >= 0) {
+          console.log({authInputPosition})
+          inputs[authInputPosition].value = ''
+          if (authInputPosition === 0) { return }
+          inputs[authInputPosition-1].focus()
+          authInputPosition--
+        }
+      }
+    })
+
+    document.addEventListener('paste', e => {
+      const paste = (e.clipboardData || window.clipboardData).getData('text')
+      inputs.forEach((input, index) => {
+        input.value = paste[index] || ''
+        if (authInputPosition + 1 < AUTH_CODE_LENGTH) {
+          authInputPosition++
+        }
+      })
+    })
+  </script>
+</DaysLayout>
